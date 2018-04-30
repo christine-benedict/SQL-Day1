@@ -1,0 +1,40 @@
+SELECT name, population, lifeexpectancy FROM country WHERE continent = 'Africa' AND population < 30e+6 AND lifeexpectancy > 45
+
+SELECT name FROM country WHERE governmentform LIKE 'Rep%'
+
+SELECT name FROM country WHERE governmentform LIKE 'Rep%' AND indepyear > 1945
+
+SELECT name FROM country WHERE NOT(governmentform LIKE '%Rep%') AND indepyear > 1945
+
+SELECT name, lifeexpectancy  FROM country ORDER BY lifeexpectancy LIMIT 15
+
+SELECT name, lifeexpectancy FROM country WHERE lifeexpectancy IS NOT NULL ORDER BY lifeexpectancy DESC LIMIT 15
+
+SELECT name, population/surfacearea AS pop_density FROM country ORDER BY pop_density DESC LIMIT 5
+
+SELECT name, surfacearea, population FROM country ORDER BY surfacearea, population LIMIT 10
+
+WITH
+	ten_smallest AS
+    (SELECT name, gnp FROM country ORDER BY surfacearea LIMIT 10)
+    SELECT name, gnp FROM ten_smallest ORDER BY gnp DESC LIMIT 1
+
+WITH
+	ten_smallest AS
+    (SELECT name, gnp, population FROM country WHERE population != 0 ORDER BY surfacearea LIMIT 10)
+    SELECT name, gnp/population AS per_capita FROM ten_smallest ORDER BY per_capita DESC
+
+WITH
+  ten_largest AS
+  (SELECT surfacearea FROM country ORDER BY surfacearea DESC LIMIT 10)
+  SELECT sum(surfacearea) as total_area FROM ten_largest
+
+SELECT continent, sum(country.surfacearea) AS total_area, sum(country.population) AS total_population FROM country GROUP BY continent ORDER BY total_area, total_population
+
+SELECT continent, avg(country.gnp) AS avg_gnp FROM country GROUP BY continent ORDER BY avg_gnp DESC LIMIT 1
+
+SELECT headofstate, sum(country.population) AS sum_pop FROM country GROUP BY headofstate ORDER BY sum_pop DESC
+
+SELECT governmentform, count(country.*) AS pop_gov FROM country GROUP BY governmentform ORDER BY pop_gov DESC
+
+SELECT name, surfacearea FROM country ORDER BY surfacearea DESC LIMIT (SELECT max(PRIMARYKEY)*.05)
